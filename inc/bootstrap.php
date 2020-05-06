@@ -6,7 +6,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__."/functions.php";
 require_once __DIR__."/connection.php";
 
-$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
 /*require_once __DIR__ . '/settings.php';

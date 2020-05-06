@@ -169,7 +169,7 @@ function createUser($username, $password)
 function isAuthenticated()
 {
   if(!request()->cookies->has("acces_token")){
-    return false
+    return false;
   }
         try{
         Firebase\JWT\JWT::$leeway=1;

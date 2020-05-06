@@ -3,7 +3,7 @@ require_once __DIR__ . '/../inc/bootstrap.php';
 
 $user = findUserByUsername(request()->get("email"));
 
-if(!empty($user)){
+if(empty($user)){
   header('location: /login.php');
 }
 
@@ -22,7 +22,7 @@ $jwt = \Firebase\JWT\JWT::encode([
   "is_admin" => $user["role_id"] == 1
 ], getenv("SECRET_KEY"), "HS256");
 
-$accessToken = new Symfony\Component\HttpFoundation\Cookie("access_roken", $jwt, $expTime, "/", getenv("COOKIE_DOMAIN"));
+$accessToken = new Symfony\Component\HttpFoundation\Cookie("access_token", $jwt, $expTime, "/", getenv("COOKIE_DOMAIN"));
 
 redirect("/", ["cookies" => [$accessToken]]);
   
