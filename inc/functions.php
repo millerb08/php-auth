@@ -168,7 +168,7 @@ function createUser($username, $password)
 
 function isAuthenticated()
 {
-  if(!request()->cookies->has("acces_token")){
+  if(!request()->cookies->has("access_token")){
     return false;
   }
         try{
@@ -203,4 +203,19 @@ function requireAuth()
     $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", $time()-3600, "/", getenv("COOKIE_DOMAIN"));
     redirect('/login.php', ["cookies" => [$accesToken]]);
   }
+}
+
+function display_errors(){
+  global $session;
+  if(!$session->getFlashBag()->has("error")){
+    return;
+  }
+  $messages = $session->getFlashBag()->get("error");
+  $response = '<div class="alert alert-danger alert-dismissable">';
+  foreach($messages as $message){
+    $response .= "{$message}<br/>";
+  }
+  
+  $response .= "</div>";
+  return $response;
 }

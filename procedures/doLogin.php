@@ -2,13 +2,15 @@
 require_once __DIR__ . '/../inc/bootstrap.php';
 
 $user = findUserByUsername(request()->get("email"));
-
 if(empty($user)){
+  $session->getFlashBag()->add('error', 'Username was not found'); 
   header('location: /login.php');
+  exit();
 }
 
 if(!password_verify(request()->get("password"),$user["password"])){
   header('location: /login.php');
+  exit();
 }
 
 $expTime = time() + 3600;

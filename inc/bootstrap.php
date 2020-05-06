@@ -9,6 +9,8 @@ require_once __DIR__."/connection.php";
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
+$session = new \Symfony\Component\HttpFoundation\Session\Session();
+$session->start();
 /*require_once __DIR__ . '/settings.php';
 require_once __DIR__ . '/functions_book.php';
 require_once __DIR__ . '/functions_user.php';
