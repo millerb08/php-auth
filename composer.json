@@ -3,13 +3,8 @@
     "description": "PHP User Authentication Treehouse Course",
     "type": "project",
     "require": {
-        "symfony/http-foundation": "3.1.6"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Brian Retterer",
-            "email": "brian@brianretterer.com"
-        }
-    ]
+        "symfony/http-foundation": "3.1.6",
+        "firebase/php-jwt": "4.0",
+        "vlucas/phpdotenv": "2.4"
+    }
 }
