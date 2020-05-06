@@ -13,6 +13,16 @@ if(!password_verify(request()->get("password"),$user["password"])){
 
 $expTime = time() + 3600;
 
+$jwt = \Firebase\JWT\JWT::encode([
+  "iss" => request()->getBaseUrl(),
+  "sub" => "{$user['id']}",
+  "exp" => $expTime,
+  "ia" => time(),
+  "nbf" => time(),
+  "is_admin" => $user["role_id"] == 1
+], getenv("SECRET_KEY"), "HS256");
+  
+  
 /*$session->getFlashBag()->add('success', 'Successfully Logged Out');
 $cookie = setAuthCookie("expired", 1);
 redirect('/login.php', ["cookies" => [$cookie]]);*/
