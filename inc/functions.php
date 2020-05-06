@@ -143,7 +143,7 @@ function findUserByUsername($username)
         $stmt = $db->prepare($query);
         $stmt->bindParam(':username', $username);
         $stmt->execute();
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
 
     } catch (\Exception $e) {
         throw $e;
@@ -164,4 +164,43 @@ function createUser($username, $password)
     } catch (\Exception $e) {
         throw $e;
     }
+}
+
+function isAuthenticated()
+{
+  if(!request()->cookies->has("acces_token")){
+    return false
+  }
+        try{
+        Firebase\JWT\JWT::$leeway=1;
+        $cookie = Firebase\JWT\JWT::decode(
+          request()->cookies->get("acces_token"), //cookie o JWT to decode
+          getenv("SECRET_KEY"), //SECRET KEY to encode
+          ["HS256"] //crypto sistem method to encode and decode
+        );
+        return true;
+      }catch(Exception $e){
+        return false;
+      }
+      /*if($prop === NULL){
+        return $cookie;
+      }
+      if($prop == "auth_user_id"){
+        $pro = "sub";
+      }
+      if(!isset($cookie->$prop)){
+        return false;
+      }
+      return $cookie->$prop;
+  return decodeAuthCookie();*/
+}
+
+function requireAuth()
+{
+  if (!isAuthenticated()) {
+    //global $session;
+    //$session->getFlashBag()->add('error', 'Not Authorized');
+    $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", $time()-3600, "/", getenv("COOKIE_DOMAIN"));
+    redirect('/login.php', ["cookies" => [$accesToken]]);
+  }
 }
