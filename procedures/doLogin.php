@@ -21,6 +21,10 @@ $jwt = \Firebase\JWT\JWT::encode([
   "nbf" => time(),
   "is_admin" => $user["role_id"] == 1
 ], getenv("SECRET_KEY"), "HS256");
+
+$accessToken = new Symfony\Component\HttpFoundation\Cookie("access_roken", $jwt, $expTime, "/", getenv("COOKIE_DOMAIN"));
+
+redirect("/", ["cookies" => [$accessToken]]);
   
   
 /*$session->getFlashBag()->add('success', 'Successfully Logged Out');
