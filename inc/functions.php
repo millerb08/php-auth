@@ -174,7 +174,7 @@ function isAuthenticated()
         try{
         Firebase\JWT\JWT::$leeway=1;
         $cookie = Firebase\JWT\JWT::decode(
-          request()->cookies->get("acces_token"), //cookie o JWT to decode
+          request()->cookies->get("access_token"), //cookie o JWT to decode
           getenv("SECRET_KEY"), //SECRET KEY to encode
           ["HS256"] //crypto sistem method to encode and decode
         );
