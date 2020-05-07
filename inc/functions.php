@@ -251,6 +251,49 @@ function requireAuth()
   }
 }
 
+function requireAdmin(){
+  if (!isAuthenticated()) {
+    //global $session;
+    //$session->getFlashBag()->add('error', 'Not Authorized');
+    $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", $time()-3600, "/", getenv("COOKIE_DOMAIN"));
+    redirect('/login.php', ["cookies" => [$accesToken]]);
+  }
+  try{
+    if(!decodeJwt("is_admin")){
+      $sesion->getFlashBag()->add("error", "Not Authorized");
+      rediret("/");
+    }
+  }catch(\Exception $e){
+    $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", $time()-3600, "/", getenv("COOKIE_DOMAIN"));
+    redirect('/login.php', ["cookies" => [$accesToken]]);
+  }
+  
+}
+
+function isAdmin(){
+  if(!isAuthenticated()){
+    return false;
+  }
+  try{
+    $isAdmin = decodeJwt('auth_roles');
+  }catch(\Exception $e){
+    return false;
+  }
+  return (bool)$isAdmin;
+}
+
+function isOwner($ownerId){
+  if(!isAuthenticated()){
+    return false;
+  }
+  try{
+    $userId = decodeJwt('sub');
+  }catch(\Exception $e){
+    return false;
+  }
+  return $ownerId == $userId;
+}
+
 function display_errors(){
   global $session;
   if(!$session->getFlashBag()->has("error")){
