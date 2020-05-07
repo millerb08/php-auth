@@ -134,6 +134,19 @@ function vote($bookId, $score)
     }
 }
 
+function getAllUsers()
+{
+    global $db;
+
+    try {
+        $query = "SELECT * FROM users";
+        $stmt = $db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (\Exception $e) {
+        throw $e;
+    }
+}
 function findUserByUsername($username)
 {
     global $db;
@@ -166,6 +179,38 @@ function findUserByAccesToken()
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
 
+    } catch (\Exception $e) {
+        throw $e;
+    }
+}
+
+function findUserById($userId)
+{
+    global $db;
+
+    try {
+        $query = "SELECT * FROM users WHERE id = :userId";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+        return $stmt->fetch();
+
+    } catch (\Exception $e) {
+        throw $e;
+    }
+}
+
+function changeRole($userId, $roleId)
+{
+    global $db;
+
+    try {
+        $query = "UPDATE users SET role_id = :roleId WHERE id = :userId";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':roleId', $roleId);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+        return findUserById($userId);
     } catch (\Exception $e) {
         throw $e;
     }
@@ -246,7 +291,7 @@ function requireAuth()
   if (!isAuthenticated()) {
     //global $session;
     //$session->getFlashBag()->add('error', 'Not Authorized');
-    $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", $time()-3600, "/", getenv("COOKIE_DOMAIN"));
+    $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", time()-3600, "/", getenv("COOKIE_DOMAIN"));
     redirect('/login.php', ["cookies" => [$accesToken]]);
   }
 }
@@ -255,16 +300,16 @@ function requireAdmin(){
   if (!isAuthenticated()) {
     //global $session;
     //$session->getFlashBag()->add('error', 'Not Authorized');
-    $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", $time()-3600, "/", getenv("COOKIE_DOMAIN"));
+    $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", time()-3600, "/", getenv("COOKIE_DOMAIN"));
     redirect('/login.php', ["cookies" => [$accesToken]]);
   }
   try{
     if(!decodeJwt("is_admin")){
-      $sesion->getFlashBag()->add("error", "Not Authorized");
+      $session->getFlashBag()->add("error", "Not Authorized");
       rediret("/");
     }
   }catch(\Exception $e){
-    $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", $time()-3600, "/", getenv("COOKIE_DOMAIN"));
+    $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", time()-3600, "/", getenv("COOKIE_DOMAIN"));
     redirect('/login.php', ["cookies" => [$accesToken]]);
   }
   
