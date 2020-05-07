@@ -289,14 +289,15 @@ function isAuthenticated()
 function requireAuth()
 {
   if (!isAuthenticated()) {
-    //global $session;
-    //$session->getFlashBag()->add('error', 'Not Authorized');
+    global $session;
+    $session->getFlashBag()->add('error', 'Not Authorized');
     $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", time()-3600, "/", getenv("COOKIE_DOMAIN"));
     redirect('/login.php', ["cookies" => [$accesToken]]);
   }
 }
 
 function requireAdmin(){
+  global $session;
   if (!isAuthenticated()) {
     //global $session;
     //$session->getFlashBag()->add('error', 'Not Authorized');
@@ -306,7 +307,7 @@ function requireAdmin(){
   try{
     if(!decodeJwt("is_admin")){
       $session->getFlashBag()->add("error", "Not Authorized");
-      rediret("/");
+      redirect("/");
     }
   }catch(\Exception $e){
     $accesToken = new Symfony\Component\HttpFoundation\Cookie("access_token", "Expired", time()-3600, "/", getenv("COOKIE_DOMAIN"));
@@ -320,7 +321,7 @@ function isAdmin(){
     return false;
   }
   try{
-    $isAdmin = decodeJwt('auth_roles');
+    $isAdmin = decodeJwt('is_admin');
   }catch(\Exception $e){
     return false;
   }

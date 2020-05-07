@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__."/../inc/bootstrap.php";
-//requireAdmin();
+requireAdmin();
 $userId = request()->get("userId");
 $roleId = request()->get("roleId");
 $user=changeRole($userId,$roleId);

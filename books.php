@@ -6,6 +6,8 @@ require_once __DIR__ . '/inc/nav.php';
 <div class="container">
     <div class="well">
         <h2>Book List</h2>
+      <?php print display_errors(); ?>
+            <?php print display_success(); ?>
         <?php
         foreach (getAllBooks() as $book) {
             include __DIR__ . '/inc/book.php';

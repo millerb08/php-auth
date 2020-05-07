@@ -25,7 +25,9 @@
                 <li><a href="/register.php">Register</a></li>
                 <?php else : ?>
                 <li><a href="/account.php">My Account</a></li>
+                <?php if(isAdmin()): ?>
                 <li><a href="/admin.php">Admin</a></li>
+                <?php endif; ?>
                 <li><a href="/procedures/doLogout.php">Logout</a></li>
                 <?php endif; ?>
             </ul>

@@ -1,9 +1,15 @@
 <?php
 require_once __DIR__ . '/inc/bootstrap.php';
+requireAuth();
 require_once __DIR__ . '/inc/head.php';
 require_once __DIR__ . '/inc/nav.php';
 
 $book = getBook(request()->get('bookId'));
+
+if(!isAdmin() && !isOwner($book["owner_id"])){
+  $session->getFlashBag()->add("error", "Not Authorized");
+  redirect("/books.php");
+}
 
 $bookTitle = $book['name'];
 $bookDescription = $book['description'];
