@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../inc/bootstrap.php';
 
-$user = findUserByUsername(request()->get("email"));
+$user = findUserByUsername(request()->get("email"));;
 if(empty($user)){
   $session->getFlashBag()->add('error', 'Username was not found'); 
   header('location: /login.php');
@@ -25,7 +25,7 @@ $jwt = \Firebase\JWT\JWT::encode([
 ], getenv("SECRET_KEY"), "HS256");
 
 $accessToken = new Symfony\Component\HttpFoundation\Cookie("access_token", $jwt, $expTime, "/", getenv("COOKIE_DOMAIN"));
-
+$session->getFlashBag()->add('success', 'Successfully Logged In');
 redirect("/", ["cookies" => [$accessToken]]);
   
   

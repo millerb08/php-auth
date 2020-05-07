@@ -150,6 +150,27 @@ function findUserByUsername($username)
     }
 }
 
+function findUserByAccesToken()
+{
+    global $db;
+    try{
+      $userId = decodeJwt("sub");
+    }catch(\Exception $e){
+    
+    }
+
+    try {
+        $query = "SELECT * FROM users WHERE id = :userId";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    } catch (\Exception $e) {
+        throw $e;
+    }
+}
+
 function createUser($username, $password)
 {
     global $db;
@@ -166,33 +187,58 @@ function createUser($username, $password)
     }
 }
 
+function updatePassword($password, $userId)
+{
+    global $db;
+
+    try {
+        $query = 'UPDATE users SET password = :password WHERE id = :userId';
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+          return true;
+        } else {
+          return false;
+        }
+    } catch (\Exception $e) {
+        throw $e;
+    }
+}
+ 
+
+function decodeJwt($prop = null){
+        Firebase\JWT\JWT::$leeway=1;
+        $jwt = Firebase\JWT\JWT::decode(
+          request()->cookies->get("access_token"), //cookie o JWT to decode
+          getenv("SECRET_KEY"), //SECRET KEY to encode
+          ["HS256"] //crypto sistem method to encode and decode
+        );
+  if($prop === NULL){
+        return $jwt;
+      }
+      /*if($prop == "auth_user_id"){
+        $pro = "sub";
+      }
+      if(!isset($cookie->$prop)){
+        return false;
+      }*/
+      return $jwt->{$prop};
+  //return decodeAuthCookie();
+}
+
 function isAuthenticated()
 {
   if(!request()->cookies->has("access_token")){
     return false;
   }
         try{
-        Firebase\JWT\JWT::$leeway=1;
-        $cookie = Firebase\JWT\JWT::decode(
-          request()->cookies->get("access_token"), //cookie o JWT to decode
-          getenv("SECRET_KEY"), //SECRET KEY to encode
-          ["HS256"] //crypto sistem method to encode and decode
-        );
+        decodeJwt();
         return true;
       }catch(Exception $e){
         return false;
       }
-      /*if($prop === NULL){
-        return $cookie;
-      }
-      if($prop == "auth_user_id"){
-        $pro = "sub";
-      }
-      if(!isset($cookie->$prop)){
-        return false;
-      }
-      return $cookie->$prop;
-  return decodeAuthCookie();*/
 }
 
 function requireAuth()
@@ -218,4 +264,22 @@ function display_errors(){
   
   $response .= "</div>";
   return $response;
+}
+
+function display_success() {
+    global $session;
+
+    if(!$session->getFlashBag()->has('success')) {
+        return;
+    }
+
+    $messages = $session->getFlashBag()->get('success');
+
+    $response = '<div class="alert alert-success alert-dismissable">';
+    foreach ($messages as $message) {
+        $response .= "{$message}<br>";
+    }
+    $response .= '</div>';
+
+    return $response;
 }
